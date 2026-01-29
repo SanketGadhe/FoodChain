@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | FoodChain</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .bg-gradient-custom {
+            background: linear-gradient(135deg, #22c55e, #059669);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-custom text-white py-12 shadow-lg">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-2">Top Donors Leaderboard</h1>
+            <p class="text-lg md:text-xl opacity-90">Recognizing our top contributors for their support</p>
+        </div>
+    </header>
+
+    <!-- Leaderboard Table -->
+    <main class="container mx-auto px-6 py-8">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full bg-white">
+                <thead>
+                    <tr class="w-full bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">Rank</th>
+                        <th class="py-3 px-6 text-left">Name</th>
+                        <th class="py-3 px-6 text-left">User Type</th>
+                        <th class="py-3 px-6 text-left">Donation Points</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm font-light">
+                    <% users.forEach((user, index) => { %>
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <span class="font-medium"><%= index + 1 %></span>
+                                </div>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <div class="flex items-center">
+                                    <span class="font-semibold text-gray-800"><%= user.name %></span>
+                                </div>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <span class="text-gray-600"><%= user.userType.charAt(0).toUpperCase() + user.userType.slice(1) %></span>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <span class="font-bold text-green-600"><%= user.donationPoints %> pts</span>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-8 text-center">
+            <a href="/" 
+               class="inline-flex items-center px-6 py-3 bg-gradient-custom text-white rounded-lg hover:opacity-90 transition-all duration-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Home
+            </a>
+        </div>
+    </main>
+
+</body>
+</html>

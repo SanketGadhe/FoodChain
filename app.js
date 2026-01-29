@@ -37,27 +37,37 @@ app.get("/recipes", async (req, res) => {
     const recipes = await Promise.all(
       items.map(async (productName) => {
         try {
-          const prompt = `Create a detailed recipe using ${productName}. 
-                         Include:
-                         1. Recipe name
-                         2. Ingredients list with quantities
-                         3. Step by step cooking instructions
-                         4. Cooking time
-                         5. Difficulty level (Easy/Medium/Hard)
-                         6. Serving size`;
+          const prompt = `Provide a detailed recipe in JSON format using ${productName} as the main ingredient.
+                         The JSON structure should be:
+                         {
+                           "name": "Recipe Name",
+                           "ingredients": ["ingredient 1 with quantity", "ingredient 2 with quantity", ...],
+                           "instructions": "step-by-step cooking instructions",
+                           "cookingTime": "cooking time in minutes",
+                           "difficulty": "difficulty level (Easy, Medium, Hard)",
+                           "servings": "serving size"
+                         }
+                         Only return the JSON object, no additional text.`;
 
           const result = await model.generateContent(prompt);
-          const generatedText = result.response.text();
+          const generatedJson = JSON.parse(result.response.text());
 
           return {
             productName,
-            recipe: generatedText
+            recipe: generatedJson
           };
         } catch (error) {
           console.error(`Error generating recipe for ${productName}:`, error);
           return {
             productName,
-            recipe: "Unable to generate recipe at this time."
+            recipe: {
+              name: "Recipe not available",
+              ingredients: [],
+              instructions: "No instructions provided.",
+              cookingTime: "N/A",
+              difficulty: "N/A",
+              servings: "N/A"
+            }
           };
         }
       })
@@ -76,6 +86,7 @@ app.get("/recipes", async (req, res) => {
   }
 });
 
+
 // Middleware for checking expiring items
 app.use(async (req, res, next) => {
   try {
@@ -85,7 +96,7 @@ app.use(async (req, res, next) => {
     }
 
     const today = moment().startOf("day");
-    const expirationThreshold = moment().add(2, "days").endOf("day");
+    const expirationThreshold = moment().add(1, "days").endOf("day");
     const user_id = jwt.verify(req.cookies.token, "Secret")._id;
     
     const expiringItems = await foodItem.find({
@@ -114,7 +125,25 @@ app.use(async (req, res, next) => {
 app.get('/signup',function(req,res){
   res.render('signup')
 })
+app.get('/leaderboard', async (req, res) => {
+  try {
+    // Fetch users sorted by donationPoints in descending order
+    const users = await user.find()
+      .sort({ donationPoints: -1 })
+      .select('name donationPoints userType'); // Only select relevant fields for display
 
+    // Render leaderboard view with user data
+    res.render('leaderboard', {
+      users,
+      title: "Top Donors Leaderboard"
+    });
+  } catch (error) {
+    console.error("Error fetching leaderboard data:", error);
+    res.status(500).render('error', {
+      message: "Failed to load leaderboard"
+    });
+  }
+});
 app.get("/", (req, res) => {
   res.render("landing", { message: "" });
 });
@@ -175,12 +204,13 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
+
   const { email, password } = req.body;
   try {
     const check = await user.findOne({ email });
     if (!check)
       return res.render("login", { message: "Email or Password is incorrect" });
-
+    
     const match = await bcrypt.compare(password, check.password);
     if (!match)
       return res.render("login", { message: "Email or Password is incorrect" });
@@ -479,5 +509,5 @@ function isLogin(req, res, next) {
 }
 
 // Listen on configured port
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

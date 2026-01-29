@@ -12,39 +12,60 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
     <!-- Header Section -->
-    <div class="bg-gradient-custom text-white py-16 shadow-lg">
+    <header class="bg-gradient-custom text-white py-12 shadow-lg">
         <div class="container mx-auto px-6 text-center">
-            <h1 class="text-4xl md:text-6xl font-bold mb-4">Recipe Suggestions</h1>
-            <p class="text-xl md:text-2xl opacity-90">Make delicious meals with your expiring ingredients</p>
+            <h1 class="text-4xl md:text-6xl font-bold mb-2">Recipe Suggestions</h1>
+            <p class="text-lg md:text-xl opacity-90">Make delicious meals with your expiring ingredients</p>
         </div>
-    </div>
+    </header>
 
     <!-- Recipes Grid -->
-    <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <main class="container mx-auto px-6 py-12 flex-grow">
+        <div class="flex gap-5">
             <% recipes.forEach(function(recipeData) { %>
-                <div class="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4 pb-2 border-b">
-                        Recipe for <%= recipeData.productName %>
+                <div class="bg-white w-1/2 rounded-lg shadow-md p-6 transform transition duration-300 hover:shadow-xl">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-3">
+                        Recipe for <span class="text-green-600"><%= recipeData.productName %></span>
                     </h2>
-                    <div class="prose max-w-none">
-                        <!-- Using white-space-pre to preserve formatting -->
-                        <pre class="text-gray-600 whitespace-pre-wrap font-sans"><%= recipeData.recipe %></pre>
+                    <div class="text-gray-700">
+                        <div>
+                            <strong class="block mb-1 text-gray-900">Recipe Name:</strong>
+                            <p><%= recipeData.recipe.name %></p>
+                        </div>
+                        <div class="mt-4">
+                            <strong class="block mb-1 text-gray-900">Ingredients:</strong>
+                            <ul class="list-disc list-inside pl-2">
+                                <% recipeData.recipe.ingredients.forEach(function(ingredient) { %>
+                                    <li><%= ingredient %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                        <div class="mt-4">
+                            <strong class="block mb-1 text-gray-900">Instructions:</strong>
+                            <p class="whitespace-pre-wrap"><%= recipeData.recipe.instructions %></p>
+                        </div>
+                        <div class="mt-4">
+                            <span><strong>Cooking Time:</strong> <%= recipeData.recipe.cookingTime %></span><br>
+                            <span><strong>Difficulty:</strong> <%= recipeData.recipe.difficulty %></span><br>
+                            <span><strong>Servings:</strong> <%= recipeData.recipe.servings %></span>
+                        </div>
                     </div>
                 </div>
             <% }); %>
         </div>
 
         <!-- Back Button -->
-        <div class="mt-8 text-center">
+        <div class="mt-12 text-center">
             <a href="/read/inventory" 
-               class="inline-flex items-center px-6 py-3 bg-gradient-custom text-white rounded-lg hover:opacity-90 transition-all duration-200">
+               class="inline-flex items-center px-5 py-3 bg-gradient-custom text-white font-medium rounded-lg hover:opacity-90 transition duration-200">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back to Inventory
             </a>
         </div>
-    </div>
+    </main>
+
 </body>
 </html>
